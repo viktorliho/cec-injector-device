@@ -1,0 +1,12 @@
+# Generated build output
+/build/
+/cmake-build-*/
+compile_commands.json
+*.uf2
+
+# Local caches and editor state
+/.cache/
+/.vscode/
+/.idea/
+*.swp
+*~
