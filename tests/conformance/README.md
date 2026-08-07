@@ -1,17 +1,23 @@
 # Protocol conformance tests
 
-This area will contain black-box tests of externally observable Device Protocol
-v1 behavior. Tests must exercise protocol input, output, and lifecycle stimuli;
-they must not define compatibility by inspecting private implementation state.
+These tests exercise externally observable requirements from the normative
+protocol documents through public DeviceCore APIs. They use deterministic
+vectors derived from the specifications rather than private captures or
+implementation-state inspection.
 
-The serial-binding test exercises framing through the public DeviceCore API.
-Future conformance vectors will also cover:
+The current suites cover:
 
 - the [Pulse-Eight Serial Transport
-  Binding](../../protocol/pulse8-serial-binding.md);
+  Binding](../../protocol/pulse8-serial-binding.md), including malformed input
+  and resynchronization;
 - the [Pulse-Eight Compatibility
-  Profile](../../protocol/pulse8-compatibility-profile.md); and
-- [Wake Extension v1](../../protocol/wake-extension-v1.md).
+  Profile](../../protocol/pulse8-compatibility-profile.md), including command
+  handling and CEC transmit transactions;
+- CEC receive representation and follower-ACK decisions defined by that
+  profile; and
+- [Wake Extension v1](../../protocol/wake-extension-v1.md), including commands,
+  matching, lifecycle, diagnostics, and remote-wake outcomes.
 
-The tests use deterministic vectors derived from the normative documents; raw
-private captures are not inputs.
+CTest provides automated conformance evidence for these observable software
+boundaries. It does not establish physical electrical behavior or compatibility
+with untested hardware.

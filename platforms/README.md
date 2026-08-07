@@ -1,7 +1,9 @@
 # Platforms
 
-This area will contain platform-specific implementations of the Device
-architecture. Platforms may differ in MCU, transport, and implementation
-strategy while conforming to the public protocol and Device boundaries.
+Platform implementations connect DeviceCore to concrete electrical, timing,
+transport, lifecycle, and wake-delivery mechanisms.
 
-RP2040 is currently the only supported platform.
+[`rp2040/`](rp2040/README.md) is currently the only supported reference
+implementation. RP2040 is a current implementation choice, not an architectural
+requirement. Future platforms may use different MCUs, transports, or internal
+strategies while conforming to the protocol parts they claim.

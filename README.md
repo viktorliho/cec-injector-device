@@ -1,46 +1,97 @@
 # CEC Injector
 
-CEC Injector is a programmable HDMI-CEC endpoint. The project exists to bring
-consumer-grade HDMI-CEC integration to open computing platforms without giving
-up flexibility and control.
+CEC Injector is a programmable HDMI-CEC endpoint for open computing platforms.
+It aims to provide the everyday HDMI-CEC experience expected from consumer
+devices while preserving deeper programmability, extensibility, and user
+control.
 
-This repository contains the Device side of the CEC Injector ecosystem. The
-Device owns capabilities and delivery of already-defined intent. User-facing
-host policy belongs to CEC Injector Mate and is intentionally kept outside this
-repository.
+A Device participates directly on the CEC bus and exposes CEC capabilities to
+an attached host. It can also perform bounded delivery functions that must work
+while host software cannot, such as requesting an authorized host wake after a
+precisely configured CEC trigger. It does not decide user-facing power, input,
+or application policy.
 
-The public protocol is the long-term engineering contract between those roles,
-allowing independent Device and host implementations. Its maturity is
-**Experimental**: the published meaning of Device Protocol v1 is fixed, while
-future incompatible protocol versions remain possible. See the
-[protocol documentation](protocol/README.md).
+> **Device owns delivery. Mate owns host policy.**
 
-RP2040 is presently the only supported platform implementation. It is one
-implementation of the Device architecture, not the definition of CEC Injector;
-future implementations may use different MCUs, transports, or internal
-strategies.
+CEC Injector Mate is the project's host-software role. Mate is intentionally
+outside this Device repository, and independent host implementations can use
+the public protocol without it.
 
-The current electrical prototype is experimental. It is not presented as a
-production-ready, certified, or universally safe HDMI design.
+## Current status
 
-See the [Design Charter](docs/design-charter.md) for the project's architectural
-principles and boundaries.
+This repository contains:
+
+- the published, **Experimental** [CEC Injector Device Protocol
+  v1](protocol/README.md), including the **Experimental** Wake Extension v1;
+- a complete platform-neutral [DeviceCore](device-core/README.md);
+- the production [RP2040 reference firmware](platforms/rp2040/README.md); and
+- deterministic [host, conformance, and platform tests](tests/README.md).
+
+RP2040 is currently the only supported reference implementation. It is not the
+definition of CEC Injector: future Device implementations may use other MCUs,
+transports, or internal strategies while conforming to the applicable public
+contracts.
+
+The current RP2040 firmware has been validated on real hardware, including its
+normal host lifecycle and Remote Wake path. Detailed build instructions and the
+versioned validation record are scheduled as the next publication work.
+
+The electrical prototype remains **Experimental**. It is not presented as a
+production-ready, certified, or universally safe HDMI design. See the current
+[hardware status](hardware/README.md).
+
+## What it can do today
+
+The RP2040 reference firmware implements:
+
+- the published Pulse-Eight-compatible serial profile subset;
+- bidirectional physical CEC receive and transmit;
+- follower-ACK behavior for configured logical addresses;
+- Wake Extension v1 configuration, matching, lifecycle, and diagnostics;
+- USB Remote Wake delivery; and
+- transport attachment, suspend, resume, and session-reset handling.
+
+These are Device capabilities and delivery mechanisms. Decisions such as when
+the host should suspend, which input a user prefers, or what to do after resume
+remain host policy.
+
+## What is not claimed
+
+The project does not claim:
+
+- HDMI certification or production-ready electronics;
+- universal TV, vendor, or HDMI-system compatibility;
+- full Pulse-Eight protocol compatibility;
+- compatibility with the kernel `pulse8-cec` driver;
+- that future Devices must use RP2040 or USB; or
+- Stable protocol maturity.
+
+## Documentation
+
+- [Protocol documentation](protocol/README.md) — normative Device/host
+  contracts and conformance claims.
+- [Design Charter](docs/design-charter.md) and [Russian
+  translation](docs/design-charter.ru.md) — project goals and architectural
+  boundaries.
+- [DeviceCore](device-core/README.md) — platform-neutral implementation scope.
+- [RP2040 reference platform](platforms/rp2040/README.md) — current platform,
+  build entry point, and USB/electrical boundaries.
+- [Hardware](hardware/README.md) — experimental hardware status.
+- [Tests](tests/README.md) — automated test scopes and host test commands.
+- [Third-party material](THIRD_PARTY.md) — provenance and retained licenses.
 
 ## Repository areas
 
 - `protocol/` — the public Device/host contract.
-- `device-core/` — platform-independent Device behavior and delivery semantics.
-- `platforms/` — platform-specific Device implementations, currently RP2040.
-- `hardware/` — electrical, PCB, and enclosure design material when published.
-- `tools/` — development tools scoped to the Device repository.
-- `tests/` — Device tests, protocol conformance tests, and public fixtures.
-
-No implementation has been migrated at Repository Genesis. License selection is
-also intentionally deferred for future hardware design sources.
+- `device-core/` — platform-neutral Device behavior and delivery semantics.
+- `platforms/` — platform-specific Device implementations.
+- `hardware/` — electrical, PCB, and enclosure material when available.
+- `tools/` — public Device development and validation tools when available.
+- `tests/` — host, protocol-conformance, and platform tests.
 
 ## License
 
-The repository content currently published here is licensed under the
-[Apache License 2.0](LICENSE). Future PCB, schematic, enclosure, and other
-hardware design sources may use a separate hardware-specific license when they
-are introduced.
+Project-owned repository content is licensed under the [Apache License
+2.0](LICENSE). Third-party-derived material retains its applicable attribution
+and license; see [THIRD_PARTY.md](THIRD_PARTY.md). Future hardware design
+sources may use a separate hardware-specific license when introduced.

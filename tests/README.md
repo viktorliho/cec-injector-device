@@ -1,10 +1,21 @@
 # Tests
 
-This area contains Device-focused host tests and the public protocol
-conformance-test boundary. Host tests compile the platform-neutral Device core
-without requiring the Pico SDK or an Arm toolchain.
+The public automated suite covers platform-neutral Device behavior, observable
+protocol conformance, and RP2040 integration boundaries.
 
-Run it from a clean build directory with:
+Current scopes are:
+
+- adapter-state defaults, mutation, and reset;
+- Pulse-Eight serial framing, escaping, limits, and recovery;
+- Pulse-Eight Compatibility Profile commands and CEC TX transactions;
+- CEC receive decoding and follower-ACK decisions;
+- Wake Extension v1 commands, matching, lifecycle, and diagnostics;
+- RP2040 USB transport, output, and attachment lifecycle;
+- RP2040 USB Remote Wake binding; and
+- production-composition RX, TX, Wake, and session flows through platform
+  stubs.
+
+Run the complete host suite without the Pico SDK or an Arm toolchain:
 
 ```sh
 cmake --preset host-debug
@@ -12,5 +23,6 @@ cmake --build --preset host-debug
 ctest --preset host-debug
 ```
 
-No private tests, captures, fixtures, or platform implementation have been
-migrated.
+The deterministic host suite does not prove electrical timing, signal quality,
+USB behavior on physical hardware, or compatibility with a particular TV or
+host environment. Those require separate hardware validation.

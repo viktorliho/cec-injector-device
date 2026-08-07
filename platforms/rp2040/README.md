@@ -1,8 +1,13 @@
 # RP2040 platform
 
-This area is reserved for the current RP2040 Device implementation and its
-platform integration. RP2040 support is a current project-status fact, not an
-architectural constraint on CEC Injector.
+This directory contains the production RP2040 reference firmware and its
+platform integration. It provides the GPIO/open-drain CEC driver, electrical
+observation analyzer, physical CEC transmitter, follower-ACK actuator, USB CDC
+transport, attachment and suspend lifecycle handling, USB Remote Wake binding,
+and production composition.
+
+RP2040 support is a current project-status fact, not an architectural
+constraint on CEC Injector.
 
 The platform build uses an externally supplied Raspberry Pi Pico SDK through
 `PICO_SDK_PATH`. The SDK, TinyUSB, Arm toolchain, and generated files are not
