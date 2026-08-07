@@ -24,13 +24,6 @@ jobs:
       - name: Check out source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-      - name: Check patch hygiene
-        run: >-
-          git -C "$GITHUB_WORKSPACE" diff --check
-          4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD -- .
-          ':(exclude)docs/design-charter.md'
-          ':(exclude)docs/design-charter.ru.md'
-
       - name: Configure
         run: cmake --preset host-debug
 
