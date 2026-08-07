@@ -44,8 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     container: debian:12
     env:
-      PICO_SDK_PATH: ${{ runner.temp }}/pico-sdk
-      ARM_TOOLCHAIN_DIR: ${{ runner.temp }}/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+      PICO_SDK_PATH: /tmp/pico-sdk
+      ARM_TOOLCHAIN_DIR: /tmp/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
       ARM_TOOLCHAIN_ARCHIVE: arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
       ARM_TOOLCHAIN_SHA256: 62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823
       PICO_SDK_COMMIT: a1438dff1d38bd9c65dbd693f0e5db4b9ae91779
@@ -64,13 +64,13 @@ jobs:
       - name: Install Arm GNU Toolchain 14.2.Rel1
         run: |
           curl --fail --location --retry 3 \
-            --output "${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
+            --output "/tmp/${ARM_TOOLCHAIN_ARCHIVE}" \
             "https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/${ARM_TOOLCHAIN_ARCHIVE}"
-          echo "${ARM_TOOLCHAIN_SHA256}  ${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
+          echo "${ARM_TOOLCHAIN_SHA256}  /tmp/${ARM_TOOLCHAIN_ARCHIVE}" \
             | sha256sum --check
           tar --extract --xz \
-            --file "${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
-            --directory "${RUNNER_TEMP}"
+            --file "/tmp/${ARM_TOOLCHAIN_ARCHIVE}" \
+            --directory /tmp
           echo "${ARM_TOOLCHAIN_DIR}/bin" >> "${GITHUB_PATH}"
 
       - name: Fetch pinned Pico SDK
