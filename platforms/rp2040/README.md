@@ -8,5 +8,10 @@ The platform build uses an externally supplied Raspberry Pi Pico SDK through
 `PICO_SDK_PATH`. The SDK, TinyUSB, Arm toolchain, and generated files are not
 vendored or downloaded by this repository.
 
-The current CMake file establishes the platform boundary only. No firmware
-target or production implementation has been migrated yet.
+The electrical platform library uses GP2 for the experimental open-drain CEC
+connection by default. Configure `CEC_INJECTOR_RP2040_CEC_GPIO` at CMake time
+to select another RP2040 GPIO. This wiring default is a reference-platform
+choice, not part of Device Protocol v1.
+
+No complete firmware executable is defined until transport and composition
+code are migrated.
