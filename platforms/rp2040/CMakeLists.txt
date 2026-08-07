@@ -50,6 +50,7 @@ target_link_libraries(cec_injector_rp2040_electrical PUBLIC
 
 add_library(cec_injector_rp2040_usb STATIC
     rp2040_usb_lifecycle.c
+    rp2040_usb_remote_wake.c
     rp2040_usb_tinyusb.c
     rp2040_usb_transport.c
     usb_descriptors.c

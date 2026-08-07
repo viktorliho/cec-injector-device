@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include "rp2040_usb_remote_wake.h"
 #include "rp2040_usb_transport.h"
 
 /* Binds the instance that receives TinyUSB attachment lifecycle callbacks. */
-void rp2040_usb_lifecycle_bind(rp2040_usb_transport_t *transport);
+void rp2040_usb_lifecycle_bind(rp2040_usb_transport_t *transport,
+                               rp2040_usb_remote_wake_t *remote_wake);
