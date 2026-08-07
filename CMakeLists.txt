@@ -26,7 +26,11 @@ if(CEC_INJECTOR_BUILD_RP2040)
     include("${_cec_injector_pico_sdk_import}")
 endif()
 
-project(cec_injector_device LANGUAGES C)
+if(CEC_INJECTOR_BUILD_RP2040)
+    project(cec_injector_device LANGUAGES C CXX ASM)
+else()
+    project(cec_injector_device LANGUAGES C)
+endif()
 
 add_subdirectory(device-core)
 

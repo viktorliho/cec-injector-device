@@ -2,7 +2,6 @@
 
 #include "rp2040_usb_tinyusb.h"
 
-#include "pico/stdio_usb.h"
 #include "tusb.h"
 
 static size_t carrier_read(void *context, uint8_t *data, size_t capacity) {
@@ -33,8 +32,7 @@ static bool carrier_ready(void *context) {
     return tud_cdc_connected();
 }
 
-rp2040_usb_carrier_t rp2040_usb_tinyusb_initialize(void) {
-    (void)stdio_usb_init();
+rp2040_usb_carrier_t rp2040_usb_tinyusb_carrier(void) {
     return (rp2040_usb_carrier_t){
         .read = carrier_read,
         .write = carrier_write,
@@ -42,4 +40,12 @@ rp2040_usb_carrier_t rp2040_usb_tinyusb_initialize(void) {
         .ready = carrier_ready,
         .context = NULL,
     };
+}
+
+void rp2040_usb_tinyusb_start(void) {
+    tusb_init();
+}
+
+void rp2040_usb_tinyusb_task(void) {
+    tud_task();
 }

@@ -13,8 +13,15 @@ connection by default. Configure `CEC_INJECTOR_RP2040_CEC_GPIO` at CMake time
 to select another RP2040 GPIO. This wiring default is a reference-platform
 choice, not part of Device Protocol v1.
 
-No complete firmware executable is defined until transport and composition
-code are migrated.
+The Experimental production reference target is `cec_adapter`. It composes
+DeviceCore with the RP2040 electrical backend, CDC transport, attachment
+lifecycle, and USB Remote Wake binding. It does not include debug commands or
+suspend-capture tooling.
+
+The protocol transport owns TinyUSB initialization, cooperative `tud_task()`
+servicing, CDC RX/TX, and lifecycle callbacks. Pico USB stdio is disabled so
+stdin/stdout cannot consume or inject bytes on the protocol CDC stream. UART
+stdio is also disabled.
 
 The reference USB carrier defaults to the development identity `CAFE:CEC1`.
 `CEC_INJECTOR_USB_VID`, `CEC_INJECTOR_USB_PID`, and the manufacturer/product
@@ -25,5 +32,17 @@ distribution where required.
 The single CDC ACM function has two interfaces and no HID function. Its serial
 string is generated from the RP2040 unique board identifier; no fixed board
 serial is stored in the repository. USB suspend preserves the transport
-attachment session. Final firmware composition will connect TinyUSB lifecycle
-callbacks and Remote Wake delivery in later migration phases.
+attachment session. The production composition connects TinyUSB lifecycle
+callbacks and Remote Wake delivery through the platform binding.
+
+With an external Pico SDK available, configure and build out of tree with:
+
+```sh
+cmake -S . -B build/rp2040 -DCEC_INJECTOR_BUILD_TESTS=OFF \
+  -DCEC_INJECTOR_BUILD_RP2040=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build build/rp2040
+```
+
+Set `PICO_SDK_PATH` to the external SDK checkout before configuring. The Pico
+SDK build produces the normal ELF and UF2 outputs for `cec_adapter`. Hardware
+flashing and operational guidance follow separate build and parity validation.
