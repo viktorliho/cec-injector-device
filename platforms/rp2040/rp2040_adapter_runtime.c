@@ -9,19 +9,38 @@
 #include "rp2040_usb_lifecycle.h"
 #include "rp2040_usb_tinyusb.h"
 
-enum { MAX_ANALYZER_OBSERVATIONS_PER_TASK = 64 };
+#include "pico/time.h"
 
 static void on_received_frame(const cec_rx_frame_t *frame, void *context) {
     rp2040_adapter_runtime_t *const runtime = context;
-    wake_extension_offer_frame(
-        pulse8_profile_wake_extension(&runtime->profile), frame);
+    if (runtime->rx_frame_count == RP2040_ADAPTER_RX_FRAME_QUEUE_CAPACITY) {
+        return;
+    }
+    runtime->rx_frame_queue[runtime->rx_frame_write] = *frame;
+    runtime->rx_frame_write = (uint8_t)(
+        (runtime->rx_frame_write + 1u) %
+        RP2040_ADAPTER_RX_FRAME_QUEUE_CAPACITY);
+    runtime->rx_frame_count++;
+}
 
-    pulse8_profile_message_t messages[CEC_INJECTOR_CEC_MAX_FRAME_OCTETS];
-    const size_t count = pulse8_profile_encode_rx(
-        frame, messages, CEC_INJECTOR_CEC_MAX_FRAME_OCTETS);
-    if (count != 0) {
-        (void)rp2040_usb_transport_enqueue_batch(
-            &runtime->usb_transport, messages, count);
+static void deliver_received_frames(rp2040_adapter_runtime_t *runtime) {
+    while (runtime->rx_frame_count != 0) {
+        const cec_rx_frame_t *const frame =
+            &runtime->rx_frame_queue[runtime->rx_frame_read];
+        wake_extension_offer_frame(
+            pulse8_profile_wake_extension(&runtime->profile), frame);
+
+        pulse8_profile_message_t messages[CEC_INJECTOR_CEC_MAX_FRAME_OCTETS];
+        const size_t count = pulse8_profile_encode_rx(
+            frame, messages, CEC_INJECTOR_CEC_MAX_FRAME_OCTETS);
+        if (count != 0) {
+            (void)rp2040_usb_transport_enqueue_batch(
+                &runtime->usb_transport, messages, count);
+        }
+        runtime->rx_frame_read = (uint8_t)(
+            (runtime->rx_frame_read + 1u) %
+            RP2040_ADAPTER_RX_FRAME_QUEUE_CAPACITY);
+        runtime->rx_frame_count--;
     }
 }
 
@@ -41,6 +60,9 @@ void rp2040_adapter_runtime_initialize(rp2040_adapter_runtime_t *runtime) {
     cec_rx_decoder_initialize(&runtime->rx_decoder, &sink);
     rp2040_cec_analyzer_initialize();
     runtime->analyzer_dropped = rp2040_cec_analyzer_dropped_count();
+    runtime->rx_frame_read = 0;
+    runtime->rx_frame_write = 0;
+    runtime->rx_frame_count = 0;
 
     rp2040_usb_transport_initialize(
         &runtime->usb_transport,
@@ -53,14 +75,10 @@ void rp2040_adapter_runtime_initialize(rp2040_adapter_runtime_t *runtime) {
     rp2040_usb_tinyusb_start();
 }
 
-static void process_receive(rp2040_adapter_runtime_t *runtime,
-                            uint64_t now_us) {
+static void process_receive(rp2040_adapter_runtime_t *runtime) {
     cec_rx_observation_t observation;
-    size_t count = 0;
-    while (count < MAX_ANALYZER_OBSERVATIONS_PER_TASK &&
-           rp2040_cec_analyzer_pop(&observation)) {
+    while (rp2040_cec_analyzer_pop(&observation)) {
         cec_rx_decoder_consume(&runtime->rx_decoder, &observation);
-        count++;
     }
 
     const uint32_t dropped = rp2040_cec_analyzer_dropped_count();
@@ -68,10 +86,8 @@ static void process_receive(rp2040_adapter_runtime_t *runtime,
         cec_rx_decoder_notify_observation_overflow(&runtime->rx_decoder);
         runtime->analyzer_dropped = dropped;
     }
-    /* Do not apply an idle timeout while older analyzer input remains queued. */
-    if (count < MAX_ANALYZER_OBSERVATIONS_PER_TASK) {
-        cec_rx_decoder_poll(&runtime->rx_decoder, now_us);
-    }
+    cec_rx_decoder_poll(&runtime->rx_decoder, time_us_64());
+    deliver_received_frames(runtime);
 }
 
 static void process_transmit(rp2040_adapter_runtime_t *runtime) {
@@ -91,8 +107,8 @@ static void process_transmit(rp2040_adapter_runtime_t *runtime) {
 
 void rp2040_adapter_runtime_task(rp2040_adapter_runtime_t *runtime,
                                  uint64_t now_us) {
+    process_receive(runtime);
     rp2040_usb_tinyusb_task();
     rp2040_usb_transport_task(&runtime->usb_transport, now_us);
-    process_receive(runtime, now_us);
     process_transmit(runtime);
 }

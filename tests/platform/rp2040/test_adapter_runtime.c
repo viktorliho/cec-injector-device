@@ -193,13 +193,17 @@ static void queue_byte(uint8_t byte, bool eom) {
     queue_bit(true); /* Physically HIGH ACK slot. */
 }
 
-static void queue_cec_frame(const uint8_t *bytes, size_t length) {
-    observation_count = 0;
-    observation_offset = 0;
+static void append_cec_frame(const uint8_t *bytes, size_t length) {
     queue_observation(3711, 789);
     for (size_t index = 0; index < length; ++index) {
         queue_byte(bytes[index], index + 1u == length);
     }
+}
+
+static void queue_cec_frame(const uint8_t *bytes, size_t length) {
+    observation_count = 0;
+    observation_offset = 0;
+    append_cec_frame(bytes, length);
 }
 
 int main(void) {
@@ -244,6 +248,19 @@ int main(void) {
     assert(output.messages[0].length == 2);
     assert(output.messages[0].data[0] == (uint8_t)(0x05 | 0x40 | 0x80));
     assert(output.messages[0].data[1] == 0x04);
+
+    reset_carrier_output();
+    observation_count = 0;
+    observation_offset = 0;
+    const uint8_t first_received[] = {0x04};
+    const uint8_t second_received[] = {0x0f};
+    append_cec_frame(first_received, sizeof(first_received));
+    append_cec_frame(second_received, sizeof(second_received));
+    run_tasks(&runtime, 3);
+    output = decode_output();
+    assert(output.count == 2);
+    assert(output.messages[0].data[1] == 0x04);
+    assert(output.messages[1].data[1] == 0x0f);
 
     wake_extension_t *const wake =
         pulse8_profile_wake_extension(&runtime.profile);
