@@ -83,6 +83,7 @@ The project does not claim:
 - [Validation and compatibility](docs/validation.md) — exact tested firmware,
   environment, scenarios, and evidence boundaries.
 - [Tests](tests/README.md) — automated test scopes and host test commands.
+- [Contributing](CONTRIBUTING.md) — practical boundaries and checks for changes.
 - [Third-party material](THIRD_PARTY.md) — provenance and retained licenses.
 
 ## Repository areas
