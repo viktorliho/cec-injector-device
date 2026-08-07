@@ -9,10 +9,11 @@ Device owns capabilities and delivery of already-defined intent. User-facing
 host policy belongs to CEC Injector Mate and is intentionally kept outside this
 repository.
 
-The public protocol is intended to be the long-term engineering contract
-between those roles, allowing independent Device and host implementations. The
-protocol and this repository are currently **Experimental**; compatibility and
-stability should not yet be assumed.
+The public protocol is the long-term engineering contract between those roles,
+allowing independent Device and host implementations. Its maturity is
+**Experimental**: the published meaning of Device Protocol v1 is fixed, while
+future incompatible protocol versions remain possible. See the
+[protocol documentation](protocol/README.md).
 
 RP2040 is presently the only supported platform implementation. It is one
 implementation of the Device architecture, not the definition of CEC Injector;
@@ -27,7 +28,7 @@ principles and boundaries.
 
 ## Repository areas
 
-- `protocol/` — the future public Device/host contract.
+- `protocol/` — the public Device/host contract.
 - `device-core/` — platform-independent Device behavior and delivery semantics.
 - `platforms/` — platform-specific Device implementations, currently RP2040.
 - `hardware/` — electrical, PCB, and enclosure design material when published.
