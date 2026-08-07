@@ -23,6 +23,9 @@ cmake --build --preset host-debug
 ctest --preset host-debug
 ```
 
+See the [build guide](../docs/building.md) for requirements and the separate
+RP2040 cross-build workflow.
+
 The deterministic host suite does not prove electrical timing, signal quality,
 USB behavior on physical hardware, or compatibility with a particular TV or
 host environment. Those require separate hardware validation.

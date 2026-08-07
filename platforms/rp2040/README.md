@@ -40,14 +40,7 @@ serial is stored in the repository. USB suspend preserves the transport
 attachment session. The production composition connects TinyUSB lifecycle
 callbacks and Remote Wake delivery through the platform binding.
 
-With an external Pico SDK available, configure and build out of tree with:
-
-```sh
-cmake -S . -B build/rp2040 -DCEC_INJECTOR_BUILD_TESTS=OFF \
-  -DCEC_INJECTOR_BUILD_RP2040=ON -DCMAKE_BUILD_TYPE=Release
-cmake --build build/rp2040
-```
-
-Set `PICO_SDK_PATH` to the external SDK checkout before configuring. The Pico
-SDK build produces the normal ELF and UF2 outputs for `cec_adapter`. Hardware
-flashing and operational guidance follow separate build and parity validation.
+Use the canonical [build guide](../../docs/building.md) for validated dependency
+versions, host tests, Debug and Release commands, configuration settings, and
+artifact locations. The [hardware guide](../../hardware/README.md) documents
+only the wiring and limitations of the validated Experimental prototype.
