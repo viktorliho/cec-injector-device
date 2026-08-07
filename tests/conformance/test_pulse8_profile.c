@@ -168,13 +168,7 @@ static void test_invalid_values_lengths_and_unknown(void) {
     }
 
     const uint8_t unsupported[] = {0x16};
-    const uint8_t project_command_not_yet_implemented[] = {0xe0};
     require_generic(&profile, unsupported, sizeof(unsupported), 0, false);
-    require_generic(&profile,
-                    project_command_not_yet_implemented,
-                    sizeof(project_command_not_yet_implemented),
-                    0,
-                    false);
 }
 
 static void start_tx(pulse8_profile_t *profile,

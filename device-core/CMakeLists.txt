@@ -8,6 +8,8 @@ add_library(cec_injector_device_core STATIC
     cec_transport.c
     pulse8_profile.c
     pulse8_serial.c
+    wake_extension.c
+    wake_extension_codec.c
 )
 add_library(CECInjector::DeviceCore ALIAS cec_injector_device_core)
 
@@ -20,3 +22,9 @@ target_compile_options(cec_injector_device_core PRIVATE
     -Wextra
     -Wpedantic
 )
+
+if(CEC_INJECTOR_BUILD_TESTS)
+    target_compile_definitions(cec_injector_device_core PRIVATE
+        CEC_INJECTOR_TESTING
+    )
+endif()

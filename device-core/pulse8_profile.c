@@ -3,6 +3,7 @@
 #include "pulse8_profile.h"
 
 #include "adapter_state.h"
+#include "wake_extension_codec.h"
 
 enum {
     PING = 0x01,
@@ -49,15 +50,18 @@ static void write_u16be(pulse8_profile_message_t *response,
 void pulse8_profile_initialize(pulse8_profile_t *profile) {
     adapter_state_initialize();
     cec_transport_initialize(&profile->_tx);
+    wake_extension_initialize(&profile->_wake);
 }
 
 void pulse8_profile_session_reset(pulse8_profile_t *profile) {
     adapter_state_reset();
     cec_transport_reset(&profile->_tx);
+    wake_extension_session_reset(&profile->_wake);
 }
 
 void pulse8_profile_poll(pulse8_profile_t *profile, uint64_t now_us) {
     cec_transport_poll(&profile->_tx, now_us);
+    wake_extension_poll(&profile->_wake, now_us);
 }
 
 static bool dispatch_tx(pulse8_profile_t *profile,
@@ -106,6 +110,13 @@ bool pulse8_profile_dispatch(pulse8_profile_t *profile,
     cec_transport_poll(&profile->_tx, now_us);
 
     const uint8_t command = request[0];
+    if (command >= 0xe0u && command <= 0xe7u) {
+        return wake_extension_codec_dispatch(&profile->_wake,
+                                             request,
+                                             request_length,
+                                             response->data,
+                                             &response->length);
+    }
     if (command >= TRANSMIT && command <= TRANSMIT_ACK_POLARITY) {
         return dispatch_tx(profile, request, request_length, now_us, response);
     }
@@ -217,6 +228,16 @@ bool pulse8_profile_dispatch(pulse8_profile_t *profile,
 
     generic_response(response, false, command);
     return true;
+}
+
+void pulse8_profile_set_wake_delivery(pulse8_profile_t *profile,
+                                      wake_extension_remote_wake_fn request,
+                                      void *context) {
+    wake_extension_set_delivery(&profile->_wake, request, context);
+}
+
+wake_extension_t *pulse8_profile_wake_extension(pulse8_profile_t *profile) {
+    return &profile->_wake;
 }
 
 bool pulse8_profile_take_committed_tx(pulse8_profile_t *profile,

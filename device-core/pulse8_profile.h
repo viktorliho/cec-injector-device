@@ -8,6 +8,7 @@
 
 #include "cec_transport.h"
 #include "cec_rx.h"
+#include "wake_extension.h"
 
 enum { PULSE8_PROFILE_MAX_MESSAGE_OCTETS = 64 };
 
@@ -18,6 +19,7 @@ typedef struct {
 
 typedef struct {
     cec_transport_t _tx;
+    wake_extension_t _wake;
 } pulse8_profile_t;
 
 void pulse8_profile_initialize(pulse8_profile_t *profile);
@@ -39,6 +41,11 @@ void pulse8_profile_complete_tx(pulse8_profile_t *profile,
                                 cec_tx_result_t result);
 bool pulse8_profile_take_async(pulse8_profile_t *profile,
                                pulse8_profile_message_t *message);
+
+void pulse8_profile_set_wake_delivery(pulse8_profile_t *profile,
+                                      wake_extension_remote_wake_fn request,
+                                      void *context);
+wake_extension_t *pulse8_profile_wake_extension(pulse8_profile_t *profile);
 
 size_t pulse8_profile_encode_rx(const cec_rx_frame_t *frame,
                                 pulse8_profile_message_t *messages,

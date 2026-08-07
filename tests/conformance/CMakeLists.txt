@@ -41,3 +41,20 @@ target_compile_options(cec_injector_cec_rx_test PRIVATE
 add_test(NAME conformance.cec_rx_and_follower_ack
     COMMAND cec_injector_cec_rx_test
 )
+
+add_executable(cec_injector_wake_extension_test test_wake_extension.c)
+target_link_libraries(cec_injector_wake_extension_test PRIVATE
+    CECInjector::DeviceCore
+)
+target_compile_definitions(cec_injector_wake_extension_test PRIVATE
+    CEC_INJECTOR_TESTING
+)
+target_compile_options(cec_injector_wake_extension_test PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+add_test(NAME conformance.wake_extension_v1
+    COMMAND cec_injector_wake_extension_test
+)
