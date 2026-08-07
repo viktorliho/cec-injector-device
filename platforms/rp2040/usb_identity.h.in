@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+/* Generated from build-time reference-platform identity settings. */
+#define CEC_INJECTOR_USB_VID @CEC_INJECTOR_USB_VID@
+#define CEC_INJECTOR_USB_PID @CEC_INJECTOR_USB_PID@
+#define CEC_INJECTOR_USB_MANUFACTURER "@CEC_INJECTOR_USB_MANUFACTURER@"
+#define CEC_INJECTOR_USB_PRODUCT "@CEC_INJECTOR_USB_PRODUCT@"

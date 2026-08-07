@@ -15,3 +15,15 @@ choice, not part of Device Protocol v1.
 
 No complete firmware executable is defined until transport and composition
 code are migrated.
+
+The reference USB carrier defaults to the development identity `CAFE:CEC1`.
+`CEC_INJECTOR_USB_VID`, `CEC_INJECTOR_USB_PID`, and the manufacturer/product
+strings are build-time settings. These values identify a reference build, not
+Device Protocol v1, and must be replaced with legitimately assigned values for
+distribution where required.
+
+The single CDC ACM function has two interfaces and no HID function. Its serial
+string is generated from the RP2040 unique board identifier; no fixed board
+serial is stored in the repository. USB suspend preserves the transport
+attachment session. Final firmware composition will connect TinyUSB lifecycle
+callbacks and Remote Wake delivery in later migration phases.
