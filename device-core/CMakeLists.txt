@@ -3,6 +3,8 @@
 # DeviceCore must remain buildable with an ordinary host C compiler.
 add_library(cec_injector_device_core STATIC
     adapter_state.c
+    cec_transport.c
+    pulse8_profile.c
     pulse8_serial.c
 )
 add_library(CECInjector::DeviceCore ALIAS cec_injector_device_core)
