@@ -21,7 +21,7 @@ binary:
 
 | Item | Identity |
 |---|---|
-| Public source commit | `35d9df8f31d5f1973292ae72a1e548d87a6b632a` |
+| Public source commit | `047abed635ba07185e35724cbcfe50f37cf90f81` |
 | Release UF2 SHA-256 | `ca9e2f546077ac209fe6be399c0eab085db06115611109215cdc88c22b475a05` |
 
 The commit identifies the firmware source. The SHA-256 value identifies the
