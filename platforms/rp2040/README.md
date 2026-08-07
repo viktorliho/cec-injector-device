@@ -43,4 +43,6 @@ callbacks and Remote Wake delivery through the platform binding.
 Use the canonical [build guide](../../docs/building.md) for validated dependency
 versions, host tests, Debug and Release commands, configuration settings, and
 artifact locations. The [hardware guide](../../hardware/README.md) documents
-only the wiring and limitations of the validated Experimental prototype.
+only the wiring and limitations of the validated Experimental prototype. The
+[validation and compatibility record](../../docs/validation.md) identifies the
+exact tested firmware, environment, and evidence boundaries.

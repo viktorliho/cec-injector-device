@@ -34,7 +34,7 @@ This map proposes page scope only. It does not contain the future Wiki pages.
 | Building a Host Implementation | Guide encoding, lifecycle handling, profile selection, and extension use. | Host implementers | [`protocol/specification.md`](../protocol/specification.md), [`protocol/conformance.md`](../protocol/conformance.md), future examples and fixtures | LATER |
 | RP2040 Reference Platform | Describe the supported reference platform, build, and deployment after controlled migration. | Firmware developers and builders | [`platforms/rp2040/README.md`](../platforms/rp2040/README.md), future migrated platform sources | LATER |
 | Hardware Prototype | Describe prototype electrical, PCB, and enclosure status with appropriate limitations. | Hardware developers and evaluators | [`hardware/README.md`](../hardware/README.md), future reviewed hardware sources | LATER |
-| Compatibility and Tested Hardware | Separate normative compatibility claims from recorded validation environments. | Evaluators and integrators | [`protocol/conformance.md`](../protocol/conformance.md), protocol validation-status notes, future reviewed validation records | LATER |
+| Compatibility and Tested Hardware | Separate normative compatibility claims from recorded validation environments. | Evaluators and integrators | [`protocol/conformance.md`](../protocol/conformance.md), [`docs/validation.md`](validation.md) | LATER |
 | FAQ | Answer recurring scope, compatibility, maturity, safety, and licensing questions by linking to canonical sources. | All readers | [`README.md`](../README.md), [`docs/design-charter.md`](design-charter.md), [`protocol/README.md`](../protocol/README.md) | LAUNCH |
 
 Launch plan: **9 LAUNCH pages** and **5 LATER pages**.

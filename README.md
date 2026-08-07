@@ -33,9 +33,9 @@ transports, or internal strategies while conforming to the applicable public
 contracts.
 
 The current RP2040 firmware has been validated on real hardware, including its
-normal host lifecycle and Remote Wake path. See the [build
-guide](docs/building.md); the versioned validation record is scheduled as the
-next publication work.
+normal host lifecycle and Remote Wake path in one explicitly scoped
+environment. See the [build guide](docs/building.md) and [validation and
+compatibility record](docs/validation.md).
 
 The electrical prototype remains **Experimental**. It is not presented as a
 production-ready, certified, or universally safe HDMI design. See the current
@@ -80,6 +80,8 @@ The project does not claim:
 - [RP2040 reference platform](platforms/rp2040/README.md) — current platform,
   build entry point, and USB/electrical boundaries.
 - [Hardware](hardware/README.md) — experimental hardware status.
+- [Validation and compatibility](docs/validation.md) — exact tested firmware,
+  environment, scenarios, and evidence boundaries.
 - [Tests](tests/README.md) — automated test scopes and host test commands.
 - [Third-party material](THIRD_PARTY.md) — provenance and retained licenses.
 

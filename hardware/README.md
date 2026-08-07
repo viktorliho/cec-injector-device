@@ -8,7 +8,8 @@
 This document describes only the RP2040 electrical prototype that has actually
 been developed and validated. RP2040 is currently the only supported reference
 implementation for that reason; it is not an architectural requirement of CEC
-Injector.
+Injector. See the model-specific [validation and compatibility
+record](../docs/validation.md) for the exact scope of hardware evidence.
 
 ## Validated wiring
 
