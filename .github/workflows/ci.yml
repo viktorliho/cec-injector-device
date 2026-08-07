@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host:
+    name: Host tests
+    runs-on: ubuntu-latest
+    container: debian:12
+
+    steps:
+      - name: Install host dependencies
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends \
+            ca-certificates cmake gcc git make
+
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Check patch hygiene
+        run: git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
+
+      - name: Configure
+        run: cmake --preset host-debug
+
+      - name: Build
+        run: cmake --build --preset host-debug
+
+      - name: Test
+        run: ctest --preset host-debug
+
+  rp2040:
+    name: RP2040 Debug and Release
+    runs-on: ubuntu-latest
+    container: debian:12
+    env:
+      PICO_SDK_PATH: ${{ runner.temp }}/pico-sdk
+      ARM_TOOLCHAIN_DIR: ${{ runner.temp }}/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+      ARM_TOOLCHAIN_ARCHIVE: arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+      ARM_TOOLCHAIN_SHA256: 62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823
+      PICO_SDK_COMMIT: a1438dff1d38bd9c65dbd693f0e5db4b9ae91779
+      TINYUSB_COMMIT: 86ad6e56c1700e85f1c5678607a762cfe3aa2f47
+
+    steps:
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends \
+            ca-certificates cmake curl git make python3 xz-utils
+
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install Arm GNU Toolchain 14.2.Rel1
+        run: |
+          curl --fail --location --retry 3 \
+            --output "${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
+            "https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/${ARM_TOOLCHAIN_ARCHIVE}"
+          echo "${ARM_TOOLCHAIN_SHA256}  ${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
+            | sha256sum --check
+          tar --extract --xz \
+            --file "${RUNNER_TEMP}/${ARM_TOOLCHAIN_ARCHIVE}" \
+            --directory "${RUNNER_TEMP}"
+          echo "${ARM_TOOLCHAIN_DIR}/bin" >> "${GITHUB_PATH}"
+
+      - name: Fetch pinned Pico SDK
+        run: |
+          git clone https://github.com/raspberrypi/pico-sdk.git "${PICO_SDK_PATH}"
+          git -C "${PICO_SDK_PATH}" checkout --detach "${PICO_SDK_COMMIT}"
+          git -C "${PICO_SDK_PATH}" submodule update --init --recursive
+          test "$(git -C "${PICO_SDK_PATH}" rev-parse HEAD)" = "${PICO_SDK_COMMIT}"
+          test "$(git -C "${PICO_SDK_PATH}/lib/tinyusb" rev-parse HEAD)" = "${TINYUSB_COMMIT}"
+
+      - name: Record compiler version
+        run: arm-none-eabi-gcc --version
+
+      - name: Build Debug firmware
+        run: |
+          cmake -S . -B build/ci-rp2040-debug \
+            -DCEC_INJECTOR_BUILD_TESTS=OFF \
+            -DCEC_INJECTOR_BUILD_RP2040=ON \
+            -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build/ci-rp2040-debug --target cec_adapter
+
+      - name: Build Release firmware
+        run: |
+          cmake -S . -B build/ci-rp2040-release \
+            -DCEC_INJECTOR_BUILD_TESTS=OFF \
+            -DCEC_INJECTOR_BUILD_RP2040=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/ci-rp2040-release --target cec_adapter
+
+      - name: Verify and checksum Release artifacts
+        working-directory: build/ci-rp2040-release/platforms/rp2040
+        run: |
+          test -s cec_adapter.uf2
+          test -s cec_adapter.elf
+          sha256sum cec_adapter.uf2 cec_adapter.elf > cec_adapter.sha256
+
+      - name: Upload Release firmware
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cec-adapter-release
+          path: |
+            build/ci-rp2040-release/platforms/rp2040/cec_adapter.uf2
+            build/ci-rp2040-release/platforms/rp2040/cec_adapter.elf
+            build/ci-rp2040-release/platforms/rp2040/cec_adapter.sha256
+          if-no-files-found: error
