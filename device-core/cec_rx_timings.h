@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+/* Reference-decoder timing windows; these are not Device Protocol values. */
+enum {
+    CEC_RX_START_LOW_MIN_US = 3500,
+    CEC_RX_START_LOW_MAX_US = 3900,
+    CEC_RX_START_HIGH_MIN_US = 600,
+    CEC_RX_START_HIGH_MAX_US = 1000,
+    CEC_RX_START_TOTAL_MIN_US = 4300,
+    CEC_RX_START_TOTAL_MAX_US = 4700,
+    CEC_RX_START_CANDIDATE_LOW_MIN_US = 3000,
+
+    CEC_RX_BIT_0_LOW_MIN_US = 1300,
+    CEC_RX_BIT_0_LOW_MAX_US = 1700,
+    CEC_RX_BIT_0_HIGH_MIN_US = 700,
+    CEC_RX_BIT_0_HIGH_MAX_US = 1100,
+
+    CEC_RX_BIT_1_LOW_MIN_US = 400,
+    CEC_RX_BIT_1_LOW_MAX_US = 800,
+    CEC_RX_BIT_1_HIGH_MIN_US = 1600,
+    CEC_RX_BIT_1_HIGH_MAX_US = 2000,
+
+    CEC_RX_BIT_TOTAL_MIN_US = 2200,
+    CEC_RX_BIT_TOTAL_MAX_US = 2600,
+    CEC_RX_FRAME_IDLE_TIMEOUT_US = 5000,
+};

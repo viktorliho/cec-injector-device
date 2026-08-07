@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include "cec_transport.h"
+#include "cec_rx.h"
 
 enum { PULSE8_PROFILE_MAX_MESSAGE_OCTETS = 64 };
 
@@ -38,3 +39,7 @@ void pulse8_profile_complete_tx(pulse8_profile_t *profile,
                                 cec_tx_result_t result);
 bool pulse8_profile_take_async(pulse8_profile_t *profile,
                                pulse8_profile_message_t *message);
+
+size_t pulse8_profile_encode_rx(const cec_rx_frame_t *frame,
+                                pulse8_profile_message_t *messages,
+                                size_t capacity);

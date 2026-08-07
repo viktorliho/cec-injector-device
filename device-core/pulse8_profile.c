@@ -239,3 +239,29 @@ bool pulse8_profile_take_async(pulse8_profile_t *profile,
     message->data[0] = message_id;
     return true;
 }
+
+size_t pulse8_profile_encode_rx(const cec_rx_frame_t *frame,
+                                pulse8_profile_message_t *messages,
+                                size_t capacity) {
+    if (frame == NULL || messages == NULL || frame->length == 0 ||
+        frame->length > CEC_INJECTOR_CEC_MAX_FRAME_OCTETS ||
+        frame->length > capacity || !frame->final_eom ||
+        frame->error_flags != CEC_RX_ERROR_NONE ||
+        frame->overlapped_local_tx || frame->observation_overflow) {
+        return 0;
+    }
+
+    for (size_t index = 0; index < frame->length; ++index) {
+        uint8_t message_id = index == 0 ? 0x05u : 0x06u;
+        if (index + 1u == frame->length) {
+            message_id |= 0x80u;
+        }
+        if (index == 0 && (frame->acknowledged_octets & UINT16_C(1)) == 0) {
+            message_id |= 0x40u;
+        }
+        messages[index].length = 2;
+        messages[index].data[0] = message_id;
+        messages[index].data[1] = frame->bytes[index];
+    }
+    return frame->length;
+}

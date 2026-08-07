@@ -27,3 +27,17 @@ target_compile_options(cec_injector_pulse8_profile_test PRIVATE
 add_test(NAME conformance.pulse8_compatibility_profile
     COMMAND cec_injector_pulse8_profile_test
 )
+
+add_executable(cec_injector_cec_rx_test test_cec_rx.c)
+target_link_libraries(cec_injector_cec_rx_test PRIVATE
+    CECInjector::DeviceCore
+)
+target_compile_options(cec_injector_cec_rx_test PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+add_test(NAME conformance.cec_rx_and_follower_ack
+    COMMAND cec_injector_cec_rx_test
+)
